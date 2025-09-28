@@ -1,0 +1,59 @@
+[gd_scene load_steps=4 format=3 uid="uid://clbka1nkoyraw"]
+
+[ext_resource type="Texture2D" uid="uid://dyii2x0se5h71" path="res://icon.svg" id="1_24s88"]
+[ext_resource type="AudioStream" uid="uid://dqo3epy5w4t0e" path="res://normal gun idk.ogg" id="2_707hg"]
+
+[sub_resource type="GDScript" id="GDScript_24s88"]
+script/source = "extends Node2D
+@onready var timer: Timer = $Timer
+@onready var gunshootsfx: AudioStreamPlayer2D = $AudioStreamPlayer2D
+
+var clicklock = 0
+const bullet = preload(\"res://bullet_1_basic.tscn\")
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	look_at(get_global_mouse_position())
+	
+	rotation_degrees = wrap(rotation_degrees, 0, 360)
+	if rotation_degrees > 90 and rotation_degrees < 270:
+		scale.y = -1 
+	else: 
+		scale.y = 1
+	if Input.is_action_just_pressed(\"leftclick\"):
+		if clicklock == 0:
+			clicklock = 1
+			var bullet_ins = bullet.instantiate()
+			get_tree().root.add_child(bullet_ins)
+			bullet_ins.global_position = global_position
+			bullet_ins.rotation = rotation 
+			gunshootsfx.play()
+			timer.start()
+		
+	
+
+
+func _on_timer_timeout() -> void:
+	clicklock = 0
+"
+
+[node name="gun1_pistol" type="Node2D"]
+script = SubResource("GDScript_24s88")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -3)
+scale = Vector2(1, 0.515625)
+texture = ExtResource("1_24s88")
+offset = Vector2(64, 3.878788)
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.2
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_707hg")
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

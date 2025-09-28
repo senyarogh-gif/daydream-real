@@ -1,0 +1,82 @@
+[gd_scene load_steps=10 format=3 uid="uid://doa4s5mwuxvfa"]
+
+[ext_resource type="Texture2D" uid="uid://u41vwfy4eo3m" path="res://blimage1.png" id="1_fnc3v"]
+[ext_resource type="Texture2D" uid="uid://xxy0ui5wrugb" path="res://blimage2.png" id="2_3458a"]
+[ext_resource type="Texture2D" uid="uid://chmqalj6ky7oo" path="res://blimage3.png" id="3_rjli8"]
+[ext_resource type="Texture2D" uid="uid://dla7qj4xbwe6i" path="res://blimage4.png" id="4_lwt74"]
+[ext_resource type="Texture2D" uid="uid://bd1w7axsu3v8s" path="res://blimage5.png" id="5_wwdhf"]
+[ext_resource type="Texture2D" uid="uid://difhhpudq3jjx" path="res://blimage6.png" id="6_avkaq"]
+
+[sub_resource type="GDScript" id="GDScript_vuvea"]
+script/source = "extends CharacterBody2D
+#var bot = null
+var speed = 200
+@onready var as2d: AnimatedSprite2D = $AnimatedSprite2D
+
+
+func _physics_process(delta: float) -> void:
+	if $\"/CharacterBody2D\" != null:
+		look_at($\"/CharacterBody2D\".position)
+	position += transform.x * speed * delta
+	rotation_degrees = wrap(rotation_degrees, 0, 360)
+	if rotation_degrees > 90 and rotation_degrees < 270:
+		scale.y = -1 
+	else: 
+		scale.y = 1
+	if as2d.is_playing() == false:
+		as2d.play()
+	#position += ($\"../CharacterBody2D\".position - position)speed
+	#print(position)
+	#position = $\"../CharacterBody2D\".global_position
+	
+	#print(Globalscript.botpos)
+"
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_uxq82"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_fnc3v")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_3458a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_rjli8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_lwt74")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_wwdhf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_avkaq")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_uxq82"]
+radius = 84.53232
+height = 305.64008
+
+[node name="enemymush_1" type="CharacterBody2D"]
+position = Vector2(-7, -3)
+script = SubResource("GDScript_vuvea")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(9, -3)
+scale = Vector2(-7.5755124, 7.4649243)
+sprite_frames = SubResource("SpriteFrames_uxq82")
+frame_progress = 0.5948659
+speed_scale = 2.0
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(11.999939, -8)
+scale = Vector2(0.3430648, 0.24865851)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+scale = Vector2(1.0742943, 1.1349446)
+shape = SubResource("CapsuleShape2D_uxq82")

@@ -1,0 +1,155 @@
+[gd_scene load_steps=11 format=3 uid="uid://ypbxr6nuk68j"]
+
+[ext_resource type="Texture2D" uid="uid://dyii2x0se5h71" path="res://icon.svg" id="1_wtcfe"]
+[ext_resource type="PackedScene" uid="uid://clbka1nkoyraw" path="res://gun_1_pistol.tscn" id="2_0e48y"]
+[ext_resource type="AudioStream" uid="uid://b03noh2qqc3ws" path="res://slidine4.wav" id="3_epypp"]
+[ext_resource type="PackedScene" uid="uid://d4eyo5iu7xxh6" path="res://map.tscn" id="4_0hol4"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_q6r6c"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_wtcfe")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="GDScript" id="GDScript_0e48y"]
+script/source = "extends CharacterBody2D
+
+
+const max_speed = 400
+const accel = 400
+const friction = 400
+
+var input = Vector2.ZERO
+@onready var smokeparticles: CPUParticles2D = $smokeparticles
+@onready var slidine: AudioStreamPlayer2D = $slidine
+
+@onready var sparkparticles: CPUParticles2D = $sparkparticles
+
+func _physics_process(delta):
+	player_movement(delta)
+
+func get_input():
+	input.x = int(Input.is_action_pressed(\"d\")) - int(Input.is_action_pressed(\"a\"))
+	input.y = int(Input.is_action_pressed(\"s\")) - int(Input.is_action_pressed(\"w\"))
+	return input.normalized()
+	
+func player_movement(delta):
+	input = get_input()
+	
+	if input == Vector2.ZERO:
+		if velocity.length() > (friction * delta):
+			velocity -= velocity.normalized() * (friction * delta)
+		else:
+			velocity = Vector2.ZERO
+	else: 
+		velocity += (input * accel * delta)
+		velocity = velocity.limit_length(max_speed)
+		
+	if velocity.x >= -300 and velocity.x < -1 or velocity.x > 1 and velocity.x <= 300:
+		smokeparticles.emitting = true
+		slidine.play()
+	else:
+		smokeparticles.emitting = false
+
+	if velocity.x >= -100 and velocity.x < -1 or velocity.x > 1 and velocity.x <= 100:
+		sparkparticles.emitting = true
+	else:
+		sparkparticles.emitting = false
+	#return self.position
+	
+	move_and_slide()
+	
+"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_epypp"]
+
+[sub_resource type="Gradient" id="Gradient_0e48y"]
+colors = PackedColorArray(0.15727392, 0.15727398, 0.15727389, 1, 0.3615753, 0.36157554, 0.36157542, 0.3254902)
+
+[sub_resource type="Gradient" id="Gradient_epypp"]
+colors = PackedColorArray(0.9647059, 0, 0, 1, 1, 0.827451, 0, 0.85882354)
+
+[sub_resource type="GDScript" id="GDScript_q6r6c"]
+script/source = "extends Node2D
+
+const enemy = preload(\"res://enemymush_1.tscn\")
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	
+		var enemy_ins = enemy.instantiate()
+		get_tree().root.add_child(enemy_ins)
+		enemy_ins.position = Vector2(randi_range(-500, 500), randi_range(-500, 500))
+		enemy_ins.rotation = rotation 
+		
+		#gunshootsfx.play()
+		#timer.start()
+"
+
+[node name="Node2D" type="Node2D"]
+
+[node name="map" parent="." instance=ExtResource("4_0hol4")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CanvasLayer"]
+position = Vector2(103, 66)
+sprite_frames = SubResource("SpriteFrames_q6r6c")
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+position = Vector2(564, 340)
+script = SubResource("GDScript_0e48y")
+
+[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
+scale = Vector2(0.5741018, 0.7696361)
+texture = ExtResource("1_wtcfe")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+scale = Vector2(-2.7881892, 2.7302303)
+shape = SubResource("CapsuleShape2D_epypp")
+
+[node name="gun1_pistol" parent="CharacterBody2D" instance=ExtResource("2_0e48y")]
+scale = Vector2(0.8252991, 0.62521434)
+
+[node name="AudioListener2D" type="AudioListener2D" parent="CharacterBody2D"]
+
+[node name="smokeparticles" type="CPUParticles2D" parent="CharacterBody2D"]
+position = Vector2(0, 62)
+amount = 10
+lifetime = 0.47
+randomness = 1.0
+gravity = Vector2(0, 0)
+initial_velocity_max = 111.11
+scale_amount_min = 13.89
+scale_amount_max = 29.23
+color_ramp = SubResource("Gradient_0e48y")
+hue_variation_min = -1.0
+hue_variation_max = 1.0
+
+[node name="sparkparticles" type="CPUParticles2D" parent="CharacterBody2D"]
+position = Vector2(1, 63)
+amount = 20
+lifetime = 2.0
+direction = Vector2(1, -10)
+spread = 20.0
+gravity = Vector2(0, 2000)
+initial_velocity_min = 847.24
+initial_velocity_max = 847.24
+scale_amount_max = 3.0
+color_ramp = SubResource("Gradient_epypp")
+
+[node name="slidine" type="AudioStreamPlayer2D" parent="CharacterBody2D"]
+stream = ExtResource("3_epypp")
+volume_db = -20.633
+
+[node name="spawner" type="Node2D" parent="."]
+script = SubResource("GDScript_q6r6c")

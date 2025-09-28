@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://dqo3epy5w4t0e"
+path="res://.godot/imported/normal gun idk.ogg-9dde04ca9083d31e76e4762a6482717c.oggvorbisstr"
+
+[deps]
+
+source_file="res://normal gun idk.ogg"
+dest_files=["res://.godot/imported/normal gun idk.ogg-9dde04ca9083d31e76e4762a6482717c.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

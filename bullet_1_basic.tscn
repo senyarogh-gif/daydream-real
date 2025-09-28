@@ -1,0 +1,44 @@
+[gd_scene load_steps=4 format=3 uid="uid://c4tdjdlxift2j"]
+
+[ext_resource type="Texture2D" uid="uid://bffn2v5t4ds6" path="res://bullyet.png" id="1_wfuhe"]
+
+[sub_resource type="GDScript" id="GDScript_wgftq"]
+script/source = "extends Node2D
+
+var speed = 1500
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	position += transform.x * speed * delta
+	#print(\"ccc\")
+
+
+func _on_area_2d_area_entered(area):
+	print(\"AAB\")
+"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_eplni"]
+radius = 31.97471
+height = 91.24725
+
+[node name="bullet1_basic" type="Node2D"]
+script = SubResource("GDScript_wgftq")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -7.523164e-37)
+scale = Vector2(18.933815, 5.995347)
+texture = ExtResource("1_wfuhe")
+offset = Vector2(1.5893067, -0.49032894)
+
+[node name="Area2D" type="Area2D" parent="."]
+scale = Vector2(1, 1.0000001)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+scale = Vector2(1.7201095, -0.30685854)
+shape = SubResource("CapsuleShape2D_eplni")
+
+[connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
